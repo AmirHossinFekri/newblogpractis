@@ -35,6 +35,6 @@ export class ArticleService {
   }
 
   async getAllPublishedArticles() {
-    const articles = await this.articleModel.find({ isPublished: true });
+    return this.articleModel.find({ isPublished: true }).lean().exec();
   }
 }
