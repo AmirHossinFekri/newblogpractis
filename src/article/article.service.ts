@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { article } from './schema/article.schema';
 import { Model } from 'mongoose';
@@ -36,5 +41,21 @@ export class ArticleService {
 
   async getAllPublishedArticles() {
     return this.articleModel.find({ isPublished: true }).lean().exec();
+  }
+
+  async getArticleById(id: string, user: any, updatedArticle: articleDto) {
+    const article = await this.articleModel.findOne({ _id: id });
+
+    if (!article)
+      throw new HttpException('مقاله یافت نشد', HttpStatus.NOT_FOUND);
+
+    if (JSON.stringify(article.author) !== JSON.stringify(user.userId))
+      throw new UnauthorizedException();
+
+    article.title = updatedArticle.title;
+    article.description = updatedArticle.description;
+    article.updatedAt = new Date();
+    await article.save();
+    return article;
   }
 }

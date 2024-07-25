@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { articleDto } from './dto/article.dto';
 import { User } from 'src/user/user.decorator';
@@ -11,6 +11,15 @@ export class ArticleController {
   @Post('/')
   async postNewArticle(@Body() articleData: articleDto, @User() user: any) {
     return await this.articleService.postNewArticle(articleData, user);
+  }
+
+  @Put('/:id')
+  async updateArticle(
+    @Body() updatedArticle: articleDto,
+    @User() user: any,
+    @Param('id') id: string,
+  ) {
+    return await this.articleService.getArticleById(id, user, updatedArticle);
   }
 
   @Public()
