@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { articleDto } from './dto/article.dto';
 import { User } from 'src/user/user.decorator';
@@ -19,7 +27,12 @@ export class ArticleController {
     @User() user: any,
     @Param('id') id: string,
   ) {
-    return await this.articleService.getArticleById(id, user, updatedArticle);
+    return await this.articleService.UpdateArticle(id, user, updatedArticle);
+  }
+
+  @Delete('/:id')
+  async deleteArticle(@User() user: any, @Param('id') id: string) {
+    return this.articleService.DeleteArticle(id, user);
   }
 
   @Public()

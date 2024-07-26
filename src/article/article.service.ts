@@ -43,19 +43,33 @@ export class ArticleService {
     return this.articleModel.find({ isPublished: true }).lean().exec();
   }
 
-  async getArticleById(id: string, user: any, updatedArticle: articleDto) {
+  async UpdateArticle(id: string, user: any, updatedArticle: articleDto) {
     const article = await this.articleModel.findOne({ _id: id });
 
     if (!article)
       throw new HttpException('مقاله یافت نشد', HttpStatus.NOT_FOUND);
 
     if (JSON.stringify(article.author) !== JSON.stringify(user.userId))
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('شما صاحب این پست نیستید');
 
     article.title = updatedArticle.title;
     article.description = updatedArticle.description;
     article.updatedAt = new Date();
     await article.save();
-    return article;
+    return new HttpException('آبدیت شد', HttpStatus.CREATED);
+  }
+
+  async DeleteArticle(id: string, user: any) {
+    const article = await this.articleModel.findById(id);
+
+    if (!article)
+      throw new HttpException('مقاله یافت نشد', HttpStatus.NOT_FOUND);
+
+    if (JSON.stringify(article.author) !== JSON.stringify(user.userId))
+      throw new UnauthorizedException('شما صاحب این پست نیستید');
+
+    await this.articleModel.deleteOne({ _id: id });
+
+    return new HttpException('حذف شد', HttpStatus.OK);
   }
 }
