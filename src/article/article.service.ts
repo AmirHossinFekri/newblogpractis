@@ -39,6 +39,14 @@ export class ArticleService {
     }
   }
 
+  async getAlluserArticle(user: any) {
+    const articles = await this.articleModel.find({ author: user.userId });
+
+    if (articles.length > 0) return articles;
+
+    return new HttpException('پستی جهت نمایش وجود ندارد', HttpStatus.OK);
+  }
+
   async getAllPublishedArticles() {
     return this.articleModel.find({ isPublished: true }).lean().exec();
   }

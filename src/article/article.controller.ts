@@ -35,6 +35,11 @@ export class ArticleController {
     return this.articleService.DeleteArticle(id, user);
   }
 
+  @Get('/myarticle')
+  async getAllUserArticle(@User() user: any) {
+    return this.articleService.getAlluserArticle(user);
+  }
+
   @Public()
   @Get('/')
   async getAllPublished() {
